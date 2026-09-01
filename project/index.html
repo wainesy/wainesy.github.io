@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="3;url=go:APPMENU/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>响应式时钟</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #2c3e50, #3498db, #2c3e50);
+            color: #fff;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+        }
+        
+        .clock-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+        
+        .clock {
+            position: relative;
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 500px;
+            max-height: 500px;
+            min-width: 280px;
+            min-height: 280px;
+            border: 5px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .clock:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .time {
+            font-size: 8vmin;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            font-size: 3.5vmin;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+        }
+        
+        /* 添加时钟刻度 */
+        .clock::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .hour-marks {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .hour-mark {
+            position: absolute;
+            width: 4px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            left: 50%;
+            top: 10px;
+            transform-origin: 50% 100%;
+            transform: translateX(-50%);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .clock {
+                width: 80vmin;
+                height: 80vmin;
+            }
+            
+            .time {
+                font-size: 9vmin;
+            }
+            
+            .date {
+                font-size: 4vmin;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .clock {
+                width: 75vmin;
+                height: 75vmin;
+                border-width: 4px;
+            }
+            
+            .time {
+                font-size: 10vmin;
+            }
+            
+            .date {
+                font-size: 4.5vmin;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .clock {
+                width: 70vmin;
+                height: 70vmin;
+            }
+            
+            .time {
+                font-size: 11vmin;
+            }
+            
+            .date {
+                font-size: 5vmin;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <div class="clock">
+            <div class="hour-marks" id="hour-marks"></div>
+            <div>
+                <div class="time" id="time"></div>
+                <div class="date" id="date"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? '下午' : '上午';
+            const displayHours = (hours % 12) || 12;
+
+            document.getElementById('time').textContent = `${ampm} ${displayHours}:${minutes}:${seconds}`;
+
+            const days = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const date = now.getDate().toString().padStart(2, '0');
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const year = now.getFullYear();
+            const day = days[now.getDay()];
+
+            document.getElementById('date').textContent = `${year}-${month}-${date} ${day}`;
+        }
+
+        // 创建时钟刻度
+        function createHourMarks() {
+            const hourMarksContainer = document.getElementById('hour-marks');
+            for (let i = 0; i < 12; i++) {
+                const mark = document.createElement('div');
+                mark.className = 'hour-mark';
+                mark.style.transform = `translateX(-50%) rotate(${i * 30}deg)`;
+                hourMarksContainer.appendChild(mark);
+            }
+        }
+
+        // 初始化
+        createHourMarks();
+        setInterval(updateClock, 1000);
+        updateClock(); // 初始化时立即调用以显示时钟
+    </script>
+</body>
+</html>
