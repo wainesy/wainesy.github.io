@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的控制中心</title>
+    <style>
+        body {text-align:center; font-family: Arial; background:#f0f0f0; padding-top:50px;}
+        h1 {color:#333;}
+        button {padding:20px 40px; font-size:20px; margin:10px; border:none; border-radius:10px; cursor:pointer;}
+        .on {background:green; color:white;}
+        .off {background:red; color:white;}
+    </style>
+</head>
+<body>
+    <h1>农夫远程控制</h1>
+    <p>点按钮控制 ESP32</p>
+    
+    <button class="on" onclick="alert('这里以后连到 ESP32 的 /on')">开灯</button>
+    <button class="off" onclick="alert('这里以后连到 ESP32 的 /off')">关灯</button>
+
+    <p>等ESP32到了，我们把alert换成真正的IP就行</p>
+</body>
+</html>
