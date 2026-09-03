@@ -965,6 +965,13 @@ https://linearjitp-playback.astro.com.my/dash-wv/linear/2109/default_primary.mpd
 ################################################################# Chinese ################################################################
 
 
+#EXTINF:-1 tvg-id="astro115" group-title="Chinese" tvg-logo="http://linear-poster.astro.com.my/prod/logo/8TV_v1.png",148 8TV
+#KODIPROP:inputstream.adaptive.license_type=clearkey
+#KODIPROP:inputstream.adaptive.license_key=0cb7980e9d1d8957f9a293ed96342410:11da1ad368d0cacffe4824b6b35e22b7
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36
+https://linearjitp-playback.astro.com.my/dash-wv/linear/911/default_primary.mpd
+
+
 #EXTINF:-1 tvg-id="108" tvg-name="8TV" tvg-logo="https://image-resizer-cloud-cdn.api.tmcms.quickplay.com/image/9C66E114-6607-4EB2-9F11-DE0F25C161EE/0-16x9.png?width=530" group-title="Chinese",8TV
 #KODIPROP:inputstreamaddon=inputstream.adaptive
 #KODIPROP:inputstream.adaptive.manifest_type=dash
@@ -974,11 +981,11 @@ https://linearjitp-playback.astro.com.my/dash-wv/linear/2109/default_primary.mpd
 https://ptv2026.com/myunifi.mpd?username=vip_3klp0es8&password=wg3piwEs&channel=8TV&kid=da1cb24f-55db-4ae1-b323-19c365920539
 
 
-#EXTINF:-1 tvg-id="astro115" group-title="Chinese" tvg-logo="http://linear-poster.astro.com.my/prod/logo/8TV_v1.png",148 8TV
-#KODIPROP:inputstream.adaptive.license_type=clearkey
-#KODIPROP:inputstream.adaptive.license_key=0cb7980e9d1d8957f9a293ed96342410:11da1ad368d0cacffe4824b6b35e22b7
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36
-https://linearjitp-playback.astro.com.my/dash-wv/linear/911/default_primary.mpd
+
+
+
+
+
 
 
 #EXTINF:-1 tvg-id="astro355" group-title="Chinese" group-logo="https://dj7fdt04hl8tv.cloudfront.net/acm/media/contenthub/shop/icon_chinese-favourites.png" tvg-logo="http://linear-poster.astro.com.my/prod/logo/IQIYI_2022.png",300 iQIYI HD
@@ -1003,7 +1010,7 @@ https://linearjitp-playback.astro.com.my/dash-wv/linear/2400/default_primary.mpd
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=06282157da4e8f97623a70ed017fad10:8da72ca8501a4deb4bfc381fe1737ef4
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 14; Google TV Streamer Build/UTT3.240625.001.K5; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.60 Mobile Safari/537.36
-https://linearjitp-playback.astro.com.my/dash-wv/linear/2403/default_primary.mpd
+https://linearjitp-playback.astro.com.my/dash-wv/linear/2401/default_primary.mpd
 
 #EXTINF:-1 tvg-id="astro158" group-title="Chinese" tvg-logo="http://linear-poster.astro.com.my/prod/logo/AstroQJ_2024.png",308 Astro QJ
 #KODIPROP:inputstream.adaptive.license_type=clearkey
