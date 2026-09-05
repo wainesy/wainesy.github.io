@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MyCinema - 60% Cinema Frame</title>
+  <style>
+    :root {
+      --bg-dark: #050507;
+      --text-main: rgba(255, 255, 255, 0.95);
+      --text-sub: rgba(255, 255, 255, 0.45);
+      --glow-cyan: rgba(56, 189, 248, 0.25);
+      --frame-border: rgba(255, 255, 255, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      background: radial-gradient(ellipse at center, #0a0a0f 0%, #000 100%);
+      height: 100%; width: 100%; overflow: hidden;
+    }
+
+    .topbar {
+      position: fixed; top: 0; left: 0; width: 100%; height: 52px;
+      background: rgba(12, 13, 18, 0.6); backdrop-filter: blur(20px);
+      display: flex; align-items: center; padding: 0 18px; z-index: 20;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .logo { width: 28px; height: 28px; margin-right: 10px; border-radius: 8px; }
+    .brand { color: var(--text-main); font-size: 16px; font-weight: 600; }
+    .bell { margin-left: auto; color: var(--text-sub); font-size: 18px; }
+
+    .cinema-container {
+      position: absolute; top: 52px; bottom: 0; left: 0;
+      width: 100%; display: flex; flex-direction: column;
+    }
+
+    .mode-title {
+      padding: 14px 18px; background: transparent;
+      color: var(--text-sub); font-size: 12px; letter-spacing: 2px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .status-dot {
+      width: 6px; height: 6px; background: #22d3ee; border-radius: 50%;
+      box-shadow: 0 0 12px #22d3ee; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .video-wrapper {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 20px; position: relative;
+    }
+
+    /* ========== 升级版 60% 画框 ========== */
+    .beauty-frame {
+      position: relative;
+      width: 60vw;  /* 直接60%宽度，不用scale */
+      height: 60vh; /* 直接60%高度 */
+      max-width: 60vw;
+      max-height: 60vh;
+      aspect-ratio: 16 / 9;
+      
+      background: rgba(10, 10, 15, 0.4);
+      backdrop-filter: blur(10px); /* 玻璃磨砂 */
+      -webkit-backdrop-filter: blur(10px);
+      
+      border: 1px solid var(--frame-border);
+      border-radius: 20px; 
+      
+      /* 多层阴影 + 内发光，电影幕布质感 */
+      box-shadow: 
+        0 0 0 1px rgba(56, 189, 248, 0.1),
+        0 0 60px var(--glow-cyan),
+        0 25px 50px -12px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+    .beauty-frame:hover {
+      box-shadow: 
+        0 0 0 1px rgba(56, 189, 248, 0.2),
+        0 0 80px var(--glow-cyan),
+        0 30px 60px -12px rgba(0, 0, 0, 0.9);
+    }
+
+    /* 4个角的装饰光点 */
+    .beauty-frame::before, .beauty-frame::after {
+      content: ''; position: absolute; width: 12px; height: 12px;
+      border: 2px solid rgba(56, 189, 248, 0.4); z-index: 2;
+    }
+    .beauty-frame::before { top: 10px; left: 10px; border-right: 0; border-bottom: 0; border-radius: 4px 0 0 0; }
+    .beauty-frame::after { bottom: 10px; right: 10px; border-left: 0; border-top: 0; border-radius: 0 0 4px 0; }
+
+    video {
+      width: 100%; height: 100%;
+      object-fit: contain; /* 保证完整画面 */
+      background: #000;
+      border-radius: 18px;
+    }
+
+    /* 横屏完美适配 */
+    @media screen and (orientation: landscape) {
+      .topbar, .mode-title { display: none; }
+      .cinema-container { top: 0; }
+      .video-wrapper { padding: 0; }
+      .beauty-frame {
+        width: 60vw;
+        height: 60vh;
+        max-width: 60vw;
+        max-height: 60vh;
+        border-radius: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <img src="https://via.placeholder.com/32/007AFF/FFFFFF?text=M" class="logo">
+    <div class="brand">MyCinema</div>
+    <div class="bell">🔔</div>
+  </div>
+
+  <div class="cinema-container">
+    <div class="mode-title">
+      <span class="status-dot"></span>
+      <span><b>CINEMA MODE</b> / 60% GLASS FRAME</span>
+    </div>
+    <div class="video-wrapper">
+      <div class="beauty-frame">
+        <video controls autoplay playsinline webkit-playsinline preload="metadata">
+          <source src="https://video-atl3-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQPE73brRCD1aqq0cFxYCozVjPIiDg5sgzaZ5sEgROTqnsciWliRwg-qD6spTsb53tAGTZVWAmtRftyf42SDnNrDM-gmhbsGiqLpXxS0Xw.mp4?_nc_cat=106&_nc_sid=8bf8fe&_nc_ht=video-atl3-1.xx.fbcdn.net&_nc_ohc=Ci37LUSkOmYQ7kNvwFtTsCS&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6Mjg1MzE5NTQwMTcwMjY4OCwiYXNzZXRfYWdlX2RheXMiOjMsInZpX3VzZWNhc2VfaWQiOjEwMTIzLCJkdXJhdGlvbl9zIjo1OTMyLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=la8gZSRMQ9mG_E5gJT-GSw&_nc_ss=7820f&_nc_zt=28&oh=00_AQL0pi2QLy5JFJTZCEx84D1i75C2TAw3VedyH-6Hx70ghw&oe=6AA1EBA8&bitrate=344205&tag=sve_sd&dl=1" type="video/mp4">
+        </video>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
