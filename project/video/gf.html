@@ -3,37 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>MyCinema - FullScreen</title>
+  <title>MyCinema - Full View</title>
   <style>
-    :root {
-      --bg-dark: #000;
-      --glow: rgba(0, 200, 255, 0.3);
-      --frame: rgba(0, 200, 255, 0.5);
-    }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       background: #000;
       height: 100%; width: 100%; overflow: hidden;
     }
 
-    /* 顶部栏 - 滚动时自动隐藏 */
-    .topbar {
-      position: fixed; top: 0; left: 0; width: 100%; height: 52px;
-      background: rgba(8, 10, 15, 0.85); backdrop-filter: blur(20px);
-      display: flex; align-items: center; padding: 0 16px; z-index: 20;
-      transition: transform 0.3s ease;
-    }
-    .topbar.hide { transform: translateY(-100%); } /* 播放时隐藏 */
-    .logo { 
-      width: 32px; height: 32px; margin-right: 10px; 
-      background: linear-gradient(135deg, #06b6d4, #3b82f6);
-      border-radius: 10px;
-    }
-    .brand { color: #fff; font-size: 17px; font-weight: 600; }
-    .bell { margin-left: auto; color: #888; font-size: 20px; }
-
-    /* 主容器直接全屏 */
+    /* 容器直接铺满全屏 */
     .cinema-container {
       position: absolute; top: 0; bottom: 0; left: 0; right: 0;
       width: 100%; height: 100%;
@@ -41,77 +19,22 @@
       background: #000;
     }
 
-    /* 视频直接铺满 */
-    .video-wrapper {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-
+    /* 视频填充整个屏幕 */
     video {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* 关键：contain=完整显示不裁切, cover=铺满会裁切 */
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain; /* 保证视频画面完整不被裁切；若想裁切并填满全屏可改为 cover */
       background: #000;
-    }
-
-    /* 4个角的扫描角标 - 全屏时保留 */
-    .corner {
-      position: absolute; width: 40px; height: 40px;
-      border: 3px solid var(--frame); z-index: 5;
-      animation: scan 2s infinite;
-    }
-    .corner.tl { top: 60px; left: 15px; border-right: 0; border-bottom: 0; }
-    .corner.tr { top: 60px; right: 15px; border-left: 0; border-bottom: 0; }
-    .corner.bl { bottom: 15px; left: 15px; border-right: 0; border-top: 0; }
-    .corner.br { bottom: 15px; right: 15px; border-left: 0; border-top: 0; }
-    
-    @keyframes scan {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
-    }
-
-    /* 横屏时隐藏顶部栏 */
-    @media screen and (orientation: landscape) {
-      .topbar { display: none; }
-      .corner.tl, .corner.tr { top: 15px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="topbar" id="topbar">
-  </div>
-
   <div class="cinema-container">
-    <div class="video-wrapper">
-      <!-- 4个角标 -->
-      <div class="corner tl"></div>
-      <div class="corner tr"></div>
-      <div class="corner bl"></div>
-      <div class="corner br"></div>
-
-      <video 
-        id="player"
-        controls 
-        autoplay 
-        playsinline
-        webkit-playsinline
-        preload="metadata"
-      >
-        <source src="https://video-atl3-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQPE73brRCD1aqq0cFxYCozVjPIiDg5sgzaZ5sEgROTqnsciWliRwg-qD6spTsb53tAGTZVWAmtRftyf42SDnNrDM-gmhbsGiqLpXxS0Xw.mp4?_nc_cat=106&_nc_sid=8bf8fe&_nc_ht=video-atl3-1.xx.fbcdn.net&_nc_ohc=Ci37LUSkOmYQ7kNvwFtTsCS&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6Mjg1MzE5NTQwMTcwMjY4OCwiYXNzZXRfYWdlX2RheXMiOjMsInZpX3VzZWNhc2VfaWQiOjEwMTIzLCJkdXJhdGlvbl9zIjo1OTMyLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=la8gZSRMQ9mG_E5gJT-GSw&_nc_ss=7820f&_nc_zt=28&oh=00_AQL0pi2QLy5JFJTZCEx84D1i75C2TAw3VedyH-6Hx70ghw&oe=6AA1EBA8&bitrate=344205&tag=sve_sd&dl=1" type="video/mp4">
-      </video>
-    </div>
+    <video controls autoplay playsinline webkit-playsinline preload="metadata">
+      <source src="https://video-atl3-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQPE73brRCD1aqq0cFxYCozVjPIiDg5sgzaZ5sEgROTqnsciWliRwg-qD6spTsb53tAGTZVWAmtRftyf42SDnNrDM-gmhbsGiqLpXxS0Xw.mp4?_nc_cat=106&_nc_sid=8bf8fe&_nc_ht=video-atl3-1.xx.fbcdn.net&_nc_ohc=Ci37LUSkOmYQ7kNvwFtTsCS&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6Mjg1MzE5NTQwMTcwMjY4OCwiYXNzZXRfYWdlX2RheXMiOjMsInZpX3VzZWNhc2VfaWQiOjEwMTIzLCJkdXJhdGlvbl9zIjo1OTMyLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=la8gZSRMQ9mG_E5gJT-GSw&_nc_ss=7820f&_nc_zt=28&oh=00_AQL0pi2QLy5JFJTZCEx84D1i75C2TAw3VedyH-6Hx70ghw&oe=6AA1EBA8&bitrate=344205&tag=sve_sd&dl=1" type="video/mp4">
+    </video>
   </div>
-
-  <script>
-    // 点击视频时隐藏顶部栏，再点显示
-    const player = document.getElementById('player');
-    const topbar = document.getElementById('topbar');
-    player.addEventListener('click', () => {
-      topbar.classList.toggle('hide');
-    });
-  </script>
 
 </body>
 </html>
