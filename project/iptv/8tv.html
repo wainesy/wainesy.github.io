@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8TV Stream Player</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 15px;
+    }
+    .player-container {
+      width: 100%;
+      max-width: 900px;
+      background: #050505;
+      border: 1px solid #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9);
+    }
+    video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      display: block;
+      outline: none;
+    }
+    .log-container {
+      padding: 12px;
+      background: #0a0a0a;
+      border-top: 1px solid #1a1a1a;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12px;
+      color: #00ff66;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+    .log-entry {
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+<div class="player-container">
+  <video id="video" controls playsinline></video>
+  <div id="log" class="log-container">
+    <div class="log-entry">[System] 初始化全黑主题播放器...</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+const video = document.getElementById('video');
+const log = document.getElementById('log');
+
+// 最新获取的 M3U8 直播源地址
+const rawUrl = 'https://2bfd741e.b-cdn.net/streamer/CdGgA8CuN4EUeZHTUp8H9SQsCXgutovGhhUsziY2rhHF.m3u8?expires=1789294713&token=XL0d9YBWhUNeNQ84bLBwa-_KtWmgZnGjXGfJIolsCE4';
+
+// 自建代理服务前缀（如果通过代理加载，在此处填入 Worker 或 Node 代理地址，例如：'https://your-worker.workers.dev/?url='）
+const proxyPrefix = ''; 
+
+function appendLog(msg) {
+  const time = new Date().toLocaleTimeString();
+  log.innerHTML += `<div class="log-entry">[${time}] ${msg}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function buildUrl(url) {
+  return proxyPrefix ? proxyPrefix + encodeURIComponent(url) : url;
+}
+
+if (Hls.isSupported()) {
+  const hls = new Hls({
+    debug: false,
+    enableWorker: true,
+    lowLatencyMode: true,
+    // 动态拦截并包装所有的 M3U8 清单及 TS 视频切片请求
+    pLoader: function (config) {
+      let loader = new Hls.DefaultConfig.loader(config);
+      this.load = function (context, config, callbacks) {
+        if (proxyPrefix && context.url.indexOf('http') === 0 && !context.url.includes(proxyPrefix)) {
+          context.url = buildUrl(context.url);
+        }
+        loader.load(context, config, callbacks);
+      };
+      this.abort = function () { loader.abort(); };
+      this.destroy = function () { loader.destroy(); };
+    },
+    xhrSetup: function(xhr, url) {
+      xhr.withCredentials = false;
+    }
+  });
+
+  appendLog('正在加载播放源...');
+  hls.loadSource(buildUrl(rawUrl));
+  hls.attachMedia(video);
+
+  hls.on(Hls.Events.MANIFEST_PARSED, function() {
+    appendLog('流解析成功，尝试静音自动播放...');
+    video.muted = true;
+    video.play().then(() => {
+      appendLog('开始播放（请点击播放器音量按钮开启声音）');
+    }).catch(err => {
+      appendLog('自动播放受阻，请手动点击播放按钮: ' + err.message);
+    });
+  });
+
+  hls.on(Hls.Events.ERROR, function(event, data) {
+    if (data.fatal) {
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          appendLog(`网络错误 [${data.details}]：目标拒绝响应（Token 可能过期或存在跨域限制）。`);
+          hls.startLoad();
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          appendLog('媒体异常，尝试自动恢复...');
+          hls.recoverMediaError();
+          break;
+        default:
+          appendLog('发生严重错误，暂停播放。');
+          hls.destroy();
+          break;
+      }
+    }
+  });
+} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+  // Safari 降级兼容
+  video.src = buildUrl(rawUrl);
+  video.addEventListener('loadedmetadata', function() {
+    video.play();
+  });
+} else {
+  appendLog('当前浏览器环境不支持 HLS 播放');
+}
+</script>
+</body>
+</html>
