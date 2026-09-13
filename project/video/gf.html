@@ -2,39 +2,203 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>MyCinema - Full View</title>
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>通用播放器 Pro Max</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-      background: #000;
-      height: 100%; width: 100%; overflow: hidden;
-    }
-
-    /* 容器直接铺满全屏 */
-    .cinema-container {
-      position: absolute; top: 0; bottom: 0; left: 0; right: 0;
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      background: #000;
-    }
-
-    /* 视频填充整个屏幕 */
-    video {
-      width: 100vw;
-      height: 100vh;
-      object-fit: contain; /* 保证视频画面完整不被裁切；若想裁切并填满全屏可改为 cover */
-      background: #000;
-    }
+    :root {--bg:#0a0a0f;--card:rgba(20,20,30,.65);--border:rgba(255,255,255,.12);--text:#E5E7EB;--blue:#3B82F6;--gray:#4B5563;--red:#EF4444;--green:#22C55E;--yellow:#FBBF24;}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:radial-gradient(ellipse at top,#1e293b 0%,var(--bg)100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 15px}
+   .player-container{width:100%;max-width:1000px;background:var(--card);border:1px solid var(--border);border-radius:24px;overflow:hidden;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 8px 40px rgba(0,0,0,.5)}
+   .input-area{padding:24px;border-bottom:1px solid var(--border)}
+   .input-title{font-size:14px;color:#9CA3AF;margin-bottom:12px;font-weight:600}
+   .input-box{display:flex;gap:12px;align-items:stretch}
+   .input-box input{flex:1;padding:18px 20px;background:rgba(0,0,0,.4);border:2px solid var(--border);border-radius:16px;color:var(--text);font-size:16px;outline:none;font-family:monospace}
+   .input-box input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,.25)}
+   .btn-group{display:flex;gap:10px;min-width:110px}
+   .btn{padding:16px 18px;border:none;border-radius:14px;color:#fff;font-weight:700;cursor:pointer;font-size:15px;transition:all.2s;flex:1}
+   .btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+   .btn-play{background:linear-gradient(135deg,#3B82F6,#2563EB)}
+   .btn-reset{background:linear-gradient(135deg,#4B5563,#374151)}
+   .btn-clear{background:linear-gradient(135deg,#EF4444,#DC2626)}
+    video,iframe{width:100%;aspect-ratio:16/9;background:#000;display:block;border:none}
+   .log-container{padding:14px 24px;background:rgba(0,0,0,.35);border-top:1px solid var(--border);font-family:'SF Mono',monospace;font-size:12px;color:var(--green);max-height:130px;overflow-y:auto}
+   .log-entry{margin-bottom:4px;word-break:break-all}.error{color:#F87171}.warn{color:var(--yellow)}
+    @media (max-width:700px){.input-box{flex-direction:column}.btn-group{flex-direction:row;width:100%}.btn{padding:14px}}
   </style>
 </head>
 <body>
 
-  <div class="cinema-container">
-    <video controls autoplay playsinline webkit-playsinline preload="metadata">
-      <source src="https://video-atl3-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQPE73brRCD1aqq0cFxYCozVjPIiDg5sgzaZ5sEgROTqnsciWliRwg-qD6spTsb53tAGTZVWAmtRftyf42SDnNrDM-gmhbsGiqLpXxS0Xw.mp4?_nc_cat=106&_nc_sid=8bf8fe&_nc_ht=video-atl3-1.xx.fbcdn.net&_nc_ohc=Ci37LUSkOmYQ7kNvwFtTsCS&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5GQUNFQk9PSy4uQzMuNjQwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6Mjg1MzE5NTQwMTcwMjY4OCwiYXNzZXRfYWdlX2RheXMiOjMsInZpX3VzZWNhc2VfaWQiOjEwMTIzLCJkdXJhdGlvbl9zIjo1OTMyLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=la8gZSRMQ9mG_E5gJT-GSw&_nc_ss=7820f&_nc_zt=28&oh=00_AQL0pi2QLy5JFJTZCEx84D1i75C2TAw3VedyH-6Hx70ghw&oe=6AA1EBA8&bitrate=344205&tag=sve_sd&dl=1" type="video/mp4">
-    </video>
+<div class="player-container">
+  <div class="input-area">
+    <div class="input-title">粘贴播放地址 M3U8 / YouTube</div>
+    <div class="input-box">
+      <input type="text" id="urlInput" placeholder="https://example.com/stream.m3u8 或 https://youtube.com/watch?v=xxx">
+      <div class="btn-group">
+        <button class="btn btn-play" onclick="play()">播放</button>
+        <button class="btn btn-reset" onclick="resetPlayer()">重置</button>
+        <button class="btn btn-clear" onclick="clearLog()">清空</button>
+      </div>
+    </div>
   </div>
 
+  <video id="video" controls playsinline style="display:none;"></video>
+  <iframe id="ytPlayer" style="display:none;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="origin"></iframe>
+
+  <div id="log" class="log-container"><div class="log-entry">[System] 智能双模式已就绪</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+const video = document.getElementById('video');
+const ytPlayer = document.getElementById('ytPlayer');
+const log = document.getElementById('log');
+const urlInput = document.getElementById('urlInput');
+let hls;
+let retryWithProxy = false; // 防重复重试
+
+const params = new URLSearchParams(window.location.search);
+const defaultUrl = params.get('src') || '';
+const proxyApi = 'https://api.allorigins.win/raw?url=';
+const siteOrigin = window.location.protocol + '//' + window.location.host;
+
+function appendLog(msg, type = 'info') {
+  const time = new Date().toLocaleTimeString();
+  const cls = type === 'error'? 'error' : type === 'warn'? 'warn' : '';
+  log.innerHTML += `<div class="log-entry ${cls}">[${time}] ${msg}</div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function getYoutubeID(url) {
+  url = url.replace('m.youtube.com', 'www.youtube.com');
+  try {
+    const urlObj = new URL(url);
+    if (urlObj.hostname.includes('youtu.be')) return urlObj.pathname.slice(1);
+    if (urlObj.searchParams.get('v')) return urlObj.searchParams.get('v');
+  } catch(e){}
+  const reg = /(?:youtube\.com\/.*v=|youtube\.com\/embed\/|youtu\.be\/)([^&?/]+)/;
+  const match = url.match(reg);
+  return match? match[1] : null;
+}
+
+function getProxiedUrl(url){
+  if(!url)return'';
+  if(url.startsWith(proxyApi))return url;
+  return proxyApi + encodeURIComponent(url)
+}
+
+function play() {
+  const rawUrl = urlInput.value.trim();
+  if (!rawUrl) return alert('请输入链接');
+  retryWithProxy = false; // 重置
+
+  video.style.display = 'none';
+  ytPlayer.style.display = 'none';
+  if (hls) { hls.destroy(); hls = null; }
+  video.pause();
+  video.removeAttribute('src');
+
+  const ytID = getYoutubeID(rawUrl);
+  if (ytID) {
+    appendLog('检测到 YouTube 链接: ' + ytID);
+    ytPlayer.src = `https://www.youtube-nocookie.com/embed/${ytID}?autoplay=1&controls=1&rel=0&origin=${encodeURIComponent(siteOrigin)}`;
+    ytPlayer.style.display = 'block';
+    history.replaceState(null, '', '?src=' + encodeURIComponent(rawUrl));
+    return;
+  }
+
+  appendLog('检测到 M3U8 链接，模式: 直连');
+  startPlay(rawUrl, false);
+}
+
+function startPlay(url, useProxy) {
+  video.style.display = 'block';
+  const finalUrl = useProxy? getProxiedUrl(url) : url;
+  if(useProxy) appendLog('直连失败，自动切换: 代理+Referer模式', 'warn');
+
+  if (Hls.isSupported()) {
+    hls = new Hls({
+      lowLatencyMode: true,
+      enableWorker: true,
+      fLoader: useProxy? function(config) { // 只有代理模式才用fLoader
+        let loader = new Hls.DefaultConfig.loader(config);
+        this.load = function (context, config, callbacks) {
+          context.headers = {
+            'Referer': 'https://fengbao12.com/',
+            'Origin': 'https://fengbao12.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          };
+          if (context.url.indexOf('http') === 0 &&!context.url.includes('allorigins.win')) {
+            context.url = getProxiedUrl(context.url);
+          }
+          loader.load(context, config, callbacks);
+        };
+        this.abort = function () { loader.abort(); };
+        this.destroy = function () { loader.destroy(); };
+      } : undefined
+    });
+
+    hls.loadSource(finalUrl);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.muted = false;
+      video.play().then(() => {
+        appendLog(`HLS 播放成功 [${useProxy? '代理模式' : '直连模式'}]`);
+      }).catch(e => {
+        appendLog('自动播放被浏览器拦截，请手动点击播放按钮', 'error');
+      });
+      history.replaceState(null, '', '?src=' + encodeURIComponent(url));
+    });
+
+    hls.on(Hls.Events.ERROR, (e, data) => {
+      if (data.fatal &&!retryWithProxy) {
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR &&!useProxy) {
+          retryWithProxy = true;
+          appendLog(`网络错误 [${data.details}]，3秒后自动重试代理模式...`, 'error');
+          setTimeout(() => startPlay(url, true), 3000); // 3秒后重试
+        } else {
+          appendLog(`致命错误 [${data.details}]`, 'error');
+          hls.destroy();
+        }
+      }
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = finalUrl;
+    video.addEventListener('loadedmetadata', () => {
+      video.play();
+      appendLog(`Safari 原生播放成功 [${useProxy? '代理模式' : '直连模式'}]`);
+    });
+  } else {
+    appendLog('当前浏览器不支持 HLS/M3U8 播放', 'error');
+  }
+}
+
+function resetPlayer() {
+  if (hls) { hls.destroy(); hls = null; }
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+  ytPlayer.src = '';
+  urlInput.value = '';
+  history.replaceState(null, '', window.location.pathname);
+  appendLog('已重置播放器');
+}
+
+function clearLog() {
+  log.innerHTML = `<div class="log-entry">[${new Date().toLocaleTimeString()}] 日志已清空</div>`;
+}
+
+urlInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') play();
+});
+
+window.onload = () => {
+  if (defaultUrl) {
+    urlInput.value = defaultUrl;
+    play();
+  }
+};
+</script>
 </body>
 </html>
