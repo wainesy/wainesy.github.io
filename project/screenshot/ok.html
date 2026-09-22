@@ -3,45 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>单文件截图</title>
-<style>body{margin:0;padding:14px;background:#0b0e14;color:#fff;font-family:sans-serif}.c{background:#151821;border-radius:20px;padding:18px}.b{width:100%;padding:16px;border-radius:14px;border:0;font-weight:800;margin-top:10px}.r{background:#22d3ee;color:#000}.y{background:#ff9500;color:#000}.o{background:#222;color:#888;border:1px solid #333}video{width:100%;border-radius:12px;background:#000;margin-top:10px;display:none}img{width:100%;border-radius:12px;margin-top:10px}</style>
+<title>单文件截屏</title>
+<style>
+  body{margin:0;padding:14px;background:#0b0e14;color:#fff;font-family:sans-serif}
+  .c{background:#151821;border-radius:20px;padding:18px}
+  .b{width:100%;padding:16px;border-radius:14px;border:0;font-weight:800;margin-top:10px;cursor:pointer}
+  .r{background:#22d3ee;color:#000}
+  .g{background:#4ade80;color:#000}
+  .y{background:#ff9500;color:#000}
+  .o{background:#222;color:#888;border:1px solid #333}
+  video{width:100%;border-radius:12px;background:#000;margin-top:10px;display:none}
+  img{width:100%;border-radius:12px;margin-top:10px}
+</style>
 </head>
 <body>
 <div class="c">
-<h3 style="margin:0">📸 单文件截屏</h3>
+<h3 style="margin:0">📸 截屏助手</h3>
 <div id="s" style="font-size:11px;color:#888;margin-top:6px"></div>
-<button class="b r" id="b1" onclick="go()">🔴 开始截其他APP</button>
+
+<!-- 方案 1：原屏幕共享按钮 -->
+<button class="b r" id="b1" onclick="go()">🔴 开始屏幕共享 (仅 PC 端)</button>
+
+<!-- 方案 2：移动端截屏导入按钮 -->
+<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
+<button class="b g" id="bImport" onclick="document.getElementById('fileInput').click()">📁 导入手机截图</button>
+
 <button class="b y" id="b2" style="display:none" onclick="shot()">📸 咔嚓</button>
 <button class="b o" id="b3" style="display:none" onclick="off()">结束</button>
+
 <video id="v" autoplay muted playsinline></video>
 <div id="p"></div>
 <div id="list" style="margin-top:15px"></div>
 </div>
+
 <script>
 let st=null, ok=false;
 let v=document.getElementById('v'), s=document.getElementById('s');
-s.innerHTML = location.protocol==='file:'? '❌ 你现在是文件打开 file://，一定失败<br>👉 用 Simple HTTP Server 以 http:// 打开' : '✅ 当前 '+location.protocol+' 模式，可以截屏';
-async function go(){
-try{
-st=await navigator.mediaDevices.getDisplayMedia({video:true});
-v.style.display='block'; v.srcObject=st; await v.play();
-v.onloadeddata=()=>ok=true; ok=true;
-b1.style.display='none'; b2.style.display='block'; b3.style.display='block';
-s.innerHTML='✅ 已共享，去切到其他APP再回来点咔嚓';
-st.getVideoTracks()[0].onended=off;
-}catch(e){alert('失败:'+e.message+'\n必须 http:// 或 https:// 打开')}}
-function shot(){
-if(!ok||v.videoWidth==0)return alert('等1秒，视频还没好');
-let c=document.createElement('canvas'); c.width=v.videoWidth; c.height=v.videoHeight;
-c.getContext('2d').drawImage(v,0,0);
-let url=c.toDataURL('image/png');
-document.getElementById('p').innerHTML='<img src="'+url+'"><div style="text-align:center;color:#22d3ee">✅ 已截</div>';
-let a=document.createElement('a'); a.href=url; a.download='shot_'+Date.now()+'.png'; a.textContent='⬇️ 下载这张';
-a.style.cssText='display:block;padding:12px;background:#22d3ee;color:#000;text-align:center;border-radius:12px;margin-top:8px;text-decoration:none;font-weight:800';
-document.getElementById('list').prepend(a);
-document.getElementById('list').prepend(document.getElementById('p').firstChild);
+
+// 检查环境支持情况
+if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+  s.innerHTML = '✅ 当前浏览器支持屏幕共享能力';
+} else {
+  s.innerHTML = '⚠️ 当前移动端浏览器不支持录屏 API，请使用【📁 导入手机截图】';
 }
-function off(){if(st)st.getTracks().forEach(t=>t.stop()); st=null; ok=false; v.style.display='none'; b1.style.display='block'; b2.style.display='none'; b3.style.display='none';}
+
+async function go(){
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+    return alert('当前手机浏览器不支持屏幕共享，请使用【📁 导入手机截图】功能');
+  }
+  try {
+    st=await navigator.mediaDevices.getDisplayMedia({video:true});
+    v.style.display='block'; v.srcObject=st; await v.play();
+    v.onloadeddata=()=>ok=true; ok=true;
+    b1.style.display='none'; document.getElementById('bImport').style.display='none';
+    b2.style.display='block'; b3.style.display='block';
+    s.innerHTML='✅ 已共享，切到其他 APP 后回来点咔嚓';
+    st.getVideoTracks()[0].onended=off;
+  } catch(e) {
+    alert('开启共享失败：' + e.message);
+  }
+}
+
+function shot(){
+  if(!ok||v.videoWidth==0)return alert('等1秒，视频还没好');
+  let c=document.createElement('canvas'); c.width=v.videoWidth; c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0);
+  let url=c.toDataURL('image/png');
+  addResult(url);
+}
+
+function handleFile(input) {
+  if (input.files && input.files[0]) {
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      addResult(e.target.result);
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function addResult(url) {
+  document.getElementById('p').innerHTML='<img src="'+url+'"><div style="text-align:center;color:#22d3ee;margin-top:4px">✅ 已保存</div>';
+  let a=document.createElement('a'); a.href=url; a.download='shot_'+Date.now()+'.png'; a.textContent='⬇️ 下载这张';
+  a.style.cssText='display:block;padding:12px;background:#22d3ee;color:#000;text-align:center;border-radius:12px;margin-top:8px;text-decoration:none;font-weight:800';
+  document.getElementById('list').prepend(a);
+  document.getElementById('list').prepend(document.getElementById('p').firstChild);
+}
+
+function off(){
+  if(st)st.getTracks().forEach(t=>t.stop()); st=null; ok=false; 
+  v.style.display='none'; b1.style.display='block'; document.getElementById('bImport').style.display='block';
+  b2.style.display='none'; b3.style.display='none';
+}
 </script>
 </body>
 </html>
